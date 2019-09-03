@@ -8,7 +8,7 @@ spec:
   scaleTargetRef:
     apiVersion: apps/v1beta1
     kind: Deployment
-    app: user
+    name: user-v1
 
   minReplicas: 1
   maxReplicas: 10
