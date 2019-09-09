@@ -29,11 +29,9 @@ spec:
     - headers:
         apiVersion:
           exact: v2
-      uri: 
-        prefix: /user
     route:
     - destination:
-        host: user
+        host: front-end
         subset: v2
   - route:
     - destination:
