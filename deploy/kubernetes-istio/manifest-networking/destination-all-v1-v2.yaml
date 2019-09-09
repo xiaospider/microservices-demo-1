@@ -10,7 +10,7 @@ spec:
       version: v1
   - name: v2
     labels: 
-      version: v1
+      version: v2
 
 ---
 apiVersion: networking.istio.io/v1alpha3
@@ -25,4 +25,4 @@ spec:
       version: v1
   - name: v2
     labels:
-      versoin: v1
+      versoin: v2
