@@ -27,15 +27,32 @@ spec:
   gateways:
     - sock-shop/sockshop-gateway
   http:
+    - match:
+      - headers:
+          apiVersion:
+            exact: v2
+      route:
+      - destination:
+          host: front-end
+          subset: v2
+    - match:
+      - headers:
+          apiVersion:
+            exact: v1
+      route:
+      - destination:
+          host: front-end
+          subset: v1
     - route:
         - destination:
             host: front-end
             subset: v1
-          weight: 90
+          weight: 95
         - destination:
             host: front-end
             subset: v2
-          weight: 10
+          weight: 5
+          
 ---
 kind: VirtualService
 apiVersion: networking.istio.io/v1alpha3
