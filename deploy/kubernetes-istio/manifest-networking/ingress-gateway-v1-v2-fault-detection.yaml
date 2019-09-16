@@ -17,7 +17,7 @@ spec:
 kind: VirtualService
 apiVersion: networking.istio.io/v1alpha3
 metadata:
-  name: front-end
+  name: front-end-ingress
   namespace: sock-shop
   labels:
     kiali_wizard: weighted_routing
@@ -40,6 +40,20 @@ spec:
             host: front-end
             subset: v1
           weight: 100
+
+---
+kind: VirtualService
+apiVersion: networking.istio.io/v1alpha3
+metadata:
+  name: front-end
+  namespace: sock-shop
+spec:
+  hosts:
+    - 'frontend'
+  http:
+    - route:
+        - destination:
+            host: front-end
           
 ---
 kind: VirtualService
@@ -57,8 +71,8 @@ spec:
         - destination:
             host: user
             subset: v1
-          weight: 30
+          weight: 10
         - destination:
             host: user
             subset: v2
-          weight: 70
+          weight: 90
