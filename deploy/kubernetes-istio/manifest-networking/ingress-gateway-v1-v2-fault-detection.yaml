@@ -49,7 +49,7 @@ metadata:
   namespace: sock-shop
 spec:
   hosts:
-    - 'frontend'
+    - 'front-end'
   http:
     - route:
         - destination:
