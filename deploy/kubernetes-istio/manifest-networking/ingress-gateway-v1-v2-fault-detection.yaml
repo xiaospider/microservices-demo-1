@@ -19,13 +19,25 @@ apiVersion: networking.istio.io/v1alpha3
 metadata:
   name: front-end-ingress
   namespace: sock-shop
-  labels:
-    kiali_wizard: weighted_routing
 spec:
   hosts:
     - '*'
   gateways:
     - sock-shop/sockshop-gateway
+  http:
+    - route:
+        - destination:
+            host: front-end
+
+---
+kind: VirtualService
+apiVersion: networking.istio.io/v1alpha3
+metadata:
+  name: front-end
+  namespace: sock-shop
+spec:
+  hosts:
+    - 'front-end'
   http:
     - match:
       - headers:
@@ -40,20 +52,6 @@ spec:
             host: front-end
             subset: v1
           weight: 100
-
----
-kind: VirtualService
-apiVersion: networking.istio.io/v1alpha3
-metadata:
-  name: front-end
-  namespace: sock-shop
-spec:
-  hosts:
-    - 'front-end'
-  http:
-    - route:
-        - destination:
-            host: front-end
           
 ---
 kind: VirtualService
