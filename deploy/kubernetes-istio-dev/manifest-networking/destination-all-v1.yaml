@@ -1,0 +1,30 @@
+kind: DestinationRule
+apiVersion: networking.istio.io/v1alpha3
+metadata:
+  name: front-end
+  namespace: sock-shop
+  labels:
+    kiali_wizard: weighted_routing
+spec:
+  host: front-end
+  trafficPolicy: ~
+  subsets:
+    - labels:
+        version: v1
+      name: v1
+
+---
+kind: DestinationRule
+apiVersion: networking.istio.io/v1alpha3
+metadata:
+  name: user
+  namespace: sock-shop
+  labels:
+    kiali_wizard: weighted_routing
+spec:
+  host: user
+  trafficPolicy: ~
+  subsets:
+    - labels:
+        version: v1
+      name: v1
