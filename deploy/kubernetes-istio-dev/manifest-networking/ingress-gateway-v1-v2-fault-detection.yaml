@@ -23,6 +23,8 @@ metadata:
 spec:
   hosts:
     - '*'
+  gateways:
+    - sock-shop/sockshop-gateway
   http:
     - match:
       - headers:
