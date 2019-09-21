@@ -1,0 +1,76 @@
+apiVersion: networking.istio.io/v1alpha3
+kind: Gateway
+metadata:
+  name: sockshop-gateway
+  namespace: sock-shop
+spec:
+  selector:
+    istio: ingressgateway # use istio default controller
+  servers:
+  - port:
+      number: 80
+      name: http
+      protocol: HTTP
+    hosts:
+    - "*"
+---
+kind: VirtualService
+apiVersion: networking.istio.io/v1alpha3
+metadata:
+  name: front-end
+  namespace: sock-shop
+  labels:
+    kiali_wizard: weighted_routing
+spec:
+  hosts:
+    - '*'
+  gateways:
+    - sock-shop/sockshop-gateway
+  http:
+    - match:
+      - headers:
+          apiVersion:
+            exact: v2
+      route:
+      - destination:
+          host: front-end
+          subset: v2
+    - match:
+      - headers:
+          apiVersion:
+            exact: v1
+      route:
+      - destination:
+          host: front-end
+          subset: v1
+    - route:
+        - destination:
+            host: front-end
+            subset: v1
+          weight: 95
+        - destination:
+            host: front-end
+            subset: v2
+          weight: 5
+          
+---
+kind: VirtualService
+apiVersion: networking.istio.io/v1alpha3
+metadata:
+  name: user
+  namespace: sock-shop
+  labels:
+    kiali_wizard: weighted_routing
+spec:
+  hosts:
+    - user
+  http:
+    - route:
+        - destination:
+            host: user
+            subset: v1
+          weight: 30
+        - destination:
+            host: user
+            subset: v2
+          weight: 70
