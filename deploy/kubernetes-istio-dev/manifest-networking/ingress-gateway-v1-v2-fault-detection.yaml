@@ -13,21 +13,6 @@ spec:
       protocol: HTTP
     hosts:
     - "*"
----
-kind: VirtualService
-apiVersion: networking.istio.io/v1alpha3
-metadata:
-  name: front-end-ingress
-  namespace: sock-shop
-spec:
-  hosts:
-    - '*'
-  gateways:
-    - sock-shop/sockshop-gateway
-  http:
-    - route:
-        - destination:
-            host: front-end
 
 ---
 kind: VirtualService
@@ -37,7 +22,7 @@ metadata:
   namespace: sock-shop
 spec:
   hosts:
-    - 'front-end'
+    - '*'
   http:
     - match:
       - headers:
