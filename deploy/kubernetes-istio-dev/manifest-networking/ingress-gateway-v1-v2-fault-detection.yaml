@@ -54,23 +54,3 @@ spec:
           weight: 100
           
 ---
-kind: VirtualService
-apiVersion: networking.istio.io/v1alpha3
-metadata:
-  name: user
-  namespace: sock-shop
-  labels:
-    kiali_wizard: weighted_routing
-spec:
-  hosts:
-    - user
-  http:
-    - route:
-        - destination:
-            host: user
-            subset: v1
-          weight: 10
-        - destination:
-            host: user
-            subset: v2
-          weight: 90
