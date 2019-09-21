@@ -52,5 +52,9 @@ spec:
             host: front-end
             subset: v1
           weight: 100
+        - destination:
+            host: front-end
+            subset: v2
+          weight: 0
           
 ---
