@@ -31,29 +31,28 @@ spec:
     - headers:
         x-version:
           exact: v3
-    route:
-    - destination:
-        host: front-end
-        subset: v3
-      weight: 100
-  - match:
+      route:
+      - destination:
+          host: front-end
+          subset: v3
+        weight: 100
     - headers:
         x-version:
           exact: v1
-    route:
-    - destination:
-        host: front-end
-        subset: v1
-      weight: 100  
-  - route:
+      route:
       - destination:
           host: front-end
           subset: v1
         weight: 100
+  - route:
+      - destination:
+          host: front-end
+          subset: v1
+        weight: 90
       - destination:
           host: front-end
           subset: v3
-        weight: 0
+        weight: 10
     timeout: 10s
     retries:
       attempts: 3
