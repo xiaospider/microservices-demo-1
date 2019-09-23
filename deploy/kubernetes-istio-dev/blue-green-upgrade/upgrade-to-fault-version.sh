@@ -15,6 +15,49 @@ fi
 pv=$PRE_VERSION
 nv=$NEW_VERSION
 
+rollback () {
+    local msg=$1
+    local pv=$2
+    local nv=$3   
+    echo "$msg"
+    cd "$SCRIPT_DIR" || exit
+    kubectl apply -f "$ROOT_DIR/manifest-networking/svc-normal-$pv.yaml"
+    echo "String remove deployment of version $nv"
+    kubectl delete -f "$ROOT_DIR/manifests-versions/front-end-dep-$nv.yaml"
+    echo "Remove version $nv finished"
+}
+
+weighttest () {
+   rw=$1
+   local pv=$2
+   local nv=$3
+   echo "Add route traffic to $nv weighted $rw, leaving all other to $pv"
+   kubectl apply -f "$ROOT_DIR/manifest-networking/svc-normal-$nv-$rw.yaml"
+   echo "Start canary testing"
+   cd /opt/js-engine-dev || exit
+   node index.js -f sock-shop-header.js -c username=test -c password=test -a "$pv" -a "$nv"
+   level=$?
+   
+   if [ $level == 2 ]
+   then
+     msg="version $nv with route weight $rw synthetic test failure, remove route traffic to the version $nv"
+     rollback msg "$pv" "$nv"
+     return 2 
+   elif [ $level == 1 ]
+   then
+     if [ "$rw" -gt 50 ]
+     then
+       msg="version $nv with route weight $rw respsoneTime is slower than previous version $pv, remove route traffic to the version $nv"
+       rollback msg "$pv" "$nv"
+       return 1 
+     else
+       return 0
+     fi
+   else
+     return 0
+   fi
+}
+
 echo "Starting blue green upgrading front-end service from $pv to version $nv"
 kubectl delete -f "$ROOT_DIR/manifests-versions/front-end-dep-$nv.yaml"
 echo "Apply deployment version $nv to kube"
@@ -49,46 +92,3 @@ else
       fi
    done 
 fi
-
-rollback(){
-    local msg=$1
-    local pv=$2
-    local nv=$3   
-    echo "$msg"
-    cd "$SCRIPT_DIR" || exit
-    kubectl apply -f "$ROOT_DIR/manifest-networking/svc-normal-$pv.yaml"
-    echo "String remove deployment of version $nv"
-    kubectl delete -f "$ROOT_DIR/manifests-versions/front-end-dep-$nv.yaml"
-    echo "Remove version $nv finished"
-}
-
-weighttest(){
-   rw=$1
-   local pv=$2
-   local nv=$3
-   echo "Add route traffic to $nv weighted $rw, leaving all other to $pv"
-   kubectl apply -f "$ROOT_DIR/manifest-networking/svc-normal-$nv-$rw.yaml"
-   echo "Start canary testing"
-   cd /opt/js-engine-dev || exit
-   node index.js -f sock-shop-header.js -c username=test -c password=test -a "$pv" -a "$nv"
-   level=$?
-   
-   if [ $level == 2 ]
-   then
-     msg="version $nv with route weight $rw synthetic test failure, remove route traffic to the version $nv"
-     rollback msg "$pv" "$nv"
-     return 2 
-   elif [ $level == 1 ]
-   then
-     if [ "$rw" -gt 50 ]
-     then
-       msg="version $nv with route weight $rw respsoneTime is slower than previous version $pv, remove route traffic to the version $nv"
-       rollback msg "$pv" "$nv"
-       return 1 
-     else
-       return 0
-     fi
-   else
-     return 0
-   fi
-}
