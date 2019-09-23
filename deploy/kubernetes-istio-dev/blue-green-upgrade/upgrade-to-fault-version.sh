@@ -21,7 +21,7 @@ rollback () {
     local nv=$3   
     echo "$msg"
     cd "$SCRIPT_DIR" || exit
-    kubectl apply -f "$ROOT_DIR/manifest-networking/svc-normal-$pv.yaml"
+    kubectl apply -f "$ROOT_DIR/manifest-networking/svc-$pv.yaml"
     echo "String remove deployment of version $nv"
     kubectl delete -f "$ROOT_DIR/manifests-versions/front-end-dep-$nv.yaml"
     echo "Remove version $nv finished"
@@ -32,7 +32,7 @@ weighttest () {
    local pv=$2
    local nv=$3
    echo "Add route traffic to $nv weighted $rw, leaving all other to $pv"
-   kubectl apply -f "$ROOT_DIR/manifest-networking/svc-normal-$nv-$rw.yaml"
+   kubectl apply -f "$ROOT_DIR/manifest-networking/svc-$nv-$rw.yaml"
    echo "Start canary testing"
    cd /opt/js-engine-dev || exit
    node index.js -f sock-shop-header.js -c username=test -c password=test -a "$pv" -a "$nv"
@@ -64,7 +64,7 @@ echo "Apply deployment version $nv to kube"
 kubectl apply -f "$ROOT_DIR/manifests-versions/front-end-dep-$nv.yaml"
 
 echo "Add route traffic to $nv based on http header x-version=$nv, leaving all other to $pv"
-kubectl apply -f "$ROOT_DIR/manifest-networking/svc-fault-$nv-added.yaml"
+kubectl apply -f "$ROOT_DIR/manifest-networking/svc-$nv.yaml"
 
 echo "Start canary testing"
 cd /opt/js-engine-dev || exit
