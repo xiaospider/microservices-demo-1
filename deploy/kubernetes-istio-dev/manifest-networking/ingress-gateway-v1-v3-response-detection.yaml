@@ -31,19 +31,20 @@ spec:
     - headers:
         x-version:
           exact: v3
-      route:
-      - destination:
-          host: front-end
-          subset: v3
-        weight: 100
+    route:
+    - destination:
+        host: front-end
+        subset: v3
+      weight: 100
+  - match:
     - headers:
         x-version:
           exact: v1
-      route:
-      - destination:
-          host: front-end
-          subset: v1
-        weight: 100
+    route:
+    - destination:
+        host: front-end
+        subset: v1
+      weight: 100
   - route:
       - destination:
           host: front-end
