@@ -124,25 +124,26 @@ main () {
         rollback msg "$pv" "$nv"
     elif [ $level == 1 ]
     then
-    msg="Version $nv respsoneTime is slower than previous version $pv, remove route traffic to the version $nv"
-    rollback msg "$pv" "$nv"
+        msg="Version $nv respsoneTime is slower than previous version $pv, remove route traffic to the version $nv"
+        rollback msg "$pv" "$nv"
     else
-    echo "0 weight traffic test passed for version $nv !"
-    cd "$SCRIPT_DIR" || exit
-    array=( 10 50 100 )
-    for i in "${array[@]}"
-    do
-        wait_confirm " add route traffic to $nv weighted $rw "
-        weighttest "$i" "$pv" "$nv"
-        level=$?
-        if [ $level != 0 ]
-        then
-            break
-        fi
-    done
+        echo "0 weight traffic test passed for version $nv !"
+        cd "$SCRIPT_DIR" || exit
+        array=( 10 50 100 )
+        for i in "${array[@]}"
+        do
+            wait_confirm " add route traffic to $nv weighted $rw "
+            weighttest "$i" "$pv" "$nv"
+            level=$?
+            if [ $level != 0 ]
+            then
+                break
+            fi
+        done
+        remove_previous_version
+        echo " Upgrade finished, the finally version is $nv"
     fi
-    remove_previous_version
-    echo " Upgrade finished, the finally version is $nv"
+    
 }
 
 main
