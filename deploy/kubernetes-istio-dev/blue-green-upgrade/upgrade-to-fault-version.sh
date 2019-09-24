@@ -41,7 +41,7 @@ rollback () {
 }
 
 weighttest () {
-   rw=$1
+   local rw=$1
    local pv=$2
    local nv=$3
    echo "Add route traffic to $nv weighted $rw, leaving all other to $pv"
@@ -49,18 +49,18 @@ weighttest () {
    echo "Start canary testing"
    cd /opt/js-engine-dev || exit
    node index.js -f sock-shop-header.js -c username=test -c password=test -a "$pv" -a "$nv"
-   level=$?
+   local level=$?
    
    if [ $level == 2 ]
    then
      msg="Version $nv with route traffice weighted $rw synthetic test failure, remove route traffic to the version $nv"
-     rollback msg "$pv" "$nv"
+     rollback $msg "$pv" "$nv"
      return 2 
    elif [ $level == 1 ]
    then
-     if [ "$rw" -gt 50 ]
+     if [ $rw -le 50 ]
      then
-       msg="version $nv with route weight $rw respsoneTime is slower than previous version $pv, remove route traffic to the version $nv"
+       msg="Version $nv with route weight $rw respsoneTime is slower than previous version $pv, remove route traffic to the version $nv"
        rollback msg "$pv" "$nv"
        return 1 
      else
@@ -117,7 +117,7 @@ main () {
     echo "Start canary testing"
     cd /opt/js-engine-dev || exit
     node index.js -f sock-shop-header.js -c "username=test" -c "password=test" -a "$pv" -a "$nv"
-    level=$?
+    local level=$?
 
     if [ $level == 2 ]
     then 
@@ -130,19 +130,26 @@ main () {
     else
         echo "0 weight traffic test passed for version $nv !"
         cd "$SCRIPT_DIR" || exit
-        array=( 10 50 100 )
+        local array=( 10 50 100 )
+        local sf=0
         for i in "${array[@]}"
         do
-            wait_confirm " add route traffic to $nv weighted $rw "
+            wait_confirm " add route traffic to $nv weighted $i "
             weighttest "$i" "$pv" "$nv"
-            level=$?
+            local level=$?
             if [ $level != 0 ]
             then
+                $sf=1
                 break
             fi
         done
+        if [ $sf == 0 ]
+        then
         remove_previous_version
-        echo " Upgrade finished, the finally version is $nv"
+        echo "Blue green upgrade success, the finally version is $nv"
+        else
+         echo "Blue green upgrade failed, the finally version is $pv"
+        fi
     fi
     
 }
