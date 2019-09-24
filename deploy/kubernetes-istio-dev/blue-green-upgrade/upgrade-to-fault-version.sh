@@ -149,7 +149,7 @@ main () {
             local level=$?
             if [ $level != 0 ]
             then
-                $sf=1
+                sf=1
                 break
             fi
         done
