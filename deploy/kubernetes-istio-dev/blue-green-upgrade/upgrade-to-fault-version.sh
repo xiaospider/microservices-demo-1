@@ -22,7 +22,7 @@ rollback () {
     echo "$msg"
     cd "$SCRIPT_DIR" || exit
     kubectl apply -f "$ROOT_DIR/manifest-networking/svc-$pv.yaml"
-    echo "String remove deployment of version $nv"
+    echo "Starting remove deployment of version $nv"
     kubectl delete -f "$ROOT_DIR/manifests-versions/front-end-dep-$nv.yaml"
     echo "Remove version $nv finished"
 }
@@ -62,6 +62,19 @@ echo "Starting blue green upgrading front-end service from $pv to version $nv"
 kubectl delete -f "$ROOT_DIR/manifests-versions/front-end-dep-$nv.yaml"
 echo "Apply deployment version $nv to kube"
 kubectl apply -f "$ROOT_DIR/manifests-versions/front-end-dep-$nv.yaml"
+
+while [ 1 ]
+do
+    ava=`(kubectl get deployment front-end-$nv  -n sock-shop | awk -F' ' '{print $4}' | grep -v AVAILABLE)`
+    if [ $ava -gt 0 ]
+    then
+      break
+    else
+      sleep 10
+    fi
+done 
+
+echo "avariable deployment $ava"
 
 echo "Add route traffic to $nv based on http header x-version=$nv, leaving all other to $pv"
 kubectl apply -f "$ROOT_DIR/manifest-networking/svc-$nv.yaml"
