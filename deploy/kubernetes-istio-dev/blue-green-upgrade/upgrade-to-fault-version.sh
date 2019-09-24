@@ -46,6 +46,8 @@ weighttest () {
    local nv=$3
    echo "Add route traffic to $nv weighted $rw, leaving all other to $pv"
    kubectl apply -f "$ROOT_DIR/manifest-networking/svc-$nv-$rw.yaml"
+   sleep 10
+
    echo "Start canary testing"
    cd /opt/js-engine-dev || exit
    node index.js -f sock-shop-header.js -c username=test -c password=test -a "$pv" -a "$nv"
