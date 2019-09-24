@@ -17,14 +17,21 @@ nv=$NEW_VERSION
 
 wait_confirm () {
     local msg=$1
-    read -p "Are you sure $msg ?" -n 1 -r
-    if [[ $REPLY =~ ^[Yy]$ ]]
-    then
-        return 0
-    elif [[ $REPLY =~ ^[Nn]$ ]]
-    then
-        return 1
-    fi
+    # read -p "Are you sure $msg ?" -n 1 -r
+    # if [[ $REPLY =~ ^[Yy]$ ]]
+    # then
+    #     return 0
+    # elif [[ $REPLY =~ ^[Nn]$ ]]
+    # then
+    #     return 1
+    # fi
+    echo "Are you sure $msg ?"
+    select yn in "Yes" "No"; do
+    case $yn in
+        Yes ) return 0
+        No ) return 1
+    esac
+    done
 }
 
 rollback () {
