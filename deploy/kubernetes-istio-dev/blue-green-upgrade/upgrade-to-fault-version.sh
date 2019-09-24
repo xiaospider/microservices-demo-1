@@ -84,7 +84,8 @@ deploy () {
         then
         break
         else
-        sleep 10
+        echo "waiting pod started ... "
+        sleep 2
         fi
     done 
     echo "Apply deployment front-end-$nv success!"
