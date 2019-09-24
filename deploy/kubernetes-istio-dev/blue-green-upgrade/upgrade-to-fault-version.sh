@@ -126,7 +126,7 @@ main () {
     elif [ $level == 1 ]
     then
         msg="Version $nv respsoneTime is slower than previous version $pv, remove route traffic to the version $nv"
-        rollback msg "$pv" "$nv"
+        rollback $msg "$pv" "$nv"
     else
         echo "0 weight traffic test passed for version $nv !"
         cd "$SCRIPT_DIR" || exit
