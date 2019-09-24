@@ -46,7 +46,7 @@ weighttest () {
    local nv=$3
    echo "Add route traffic to $nv weighted $rw, leaving all other to $pv !"
    kubectl apply -f "$ROOT_DIR/manifest-networking/svc-$nv-$rw.yaml"
-   sleep 20
+   sleep 30
    echo "Add route traffic success !"
 
    echo "Start canary testing"
@@ -97,7 +97,7 @@ deploy () {
 addtraffic () {
     echo "Add route traffic to $nv based on http header x-version=$nv, leaving all other to $pv"
     kubectl apply -f "$ROOT_DIR/manifest-networking/svc-$nv.yaml"
-    sleep 20
+    sleep 30
     echo "Add route traffic success!"
 }
 
