@@ -64,14 +64,14 @@ weighttest () {
    if [ $level == 2 ]
    then
      msg="Version $nv with route traffice weighted $rw synthetic test failure, remove route traffic to the version $nv"
-     rollback $msg "$pv" "$nv"
+     rollback "$msg" "$pv" "$nv"
      return 2 
    elif [ $level == 1 ]
    then
      if [ $rw -le 50 ]
      then
        msg="Version $nv with route weight $rw respsoneTime is slower than previous version $pv, remove route traffic to the version $nv"
-       rollback $msg "$pv" "$nv"
+       rollback "$msg" "$pv" "$nv"
        return 1 
      else
        return 0
@@ -132,11 +132,11 @@ main () {
     if [ $level == 2 ]
     then 
         msg="Version $nv canary test failure, remove route traffic to the version $nv"
-        rollback $msg "$pv" "$nv"
+        rollback "$msg" "$pv" "$nv"
     elif [ $level == 1 ]
     then
         msg="Version $nv respsoneTime is slower than previous version $pv, remove route traffic to the version $nv"
-        rollback $msg "$pv" "$nv"
+        rollback "$msg" "$pv" "$nv"
     else
         echo "0 weight traffic test passed for version $nv !"
         cd "$SCRIPT_DIR" || exit
