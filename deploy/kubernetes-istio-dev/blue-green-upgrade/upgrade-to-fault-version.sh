@@ -28,8 +28,8 @@ wait_confirm () {
     echo "Are you sure $msg ?"
     select yn in "Yes" "No"; do
     case $yn in
-        Yes ) return 0
-        No ) return 1
+        Yes ) return 0 ;;
+        No ) return 1 ;;
     esac
     done
 }
