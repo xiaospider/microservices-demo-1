@@ -58,7 +58,7 @@ weighttest () {
 
    echo "Start canary testing"
    cd /opt/js-engine-dev || exit
-   node index.js -f sock-shop-header.js -c username=test -c password=test -a "$pv" -a "$nv"
+   node index.js -f sock-shop-header.js -c username=test -c password=test -a "$pv" -a "$nv" -l $rw
    local level=$?
    
    if [ $level == 2 ]
